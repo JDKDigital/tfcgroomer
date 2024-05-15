@@ -1,0 +1,48 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_metal/sheet/red_steel": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "tfc:metal/sheet/red_steel"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "tfcgroomer:red_steel_grooming_station"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_wattle": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "tfc:wattle"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_metal/sheet/red_steel",
+      "has_wattle",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "tfcgroomer:red_steel_grooming_station"
+    ]
+  },
+  "sends_telemetry_event": false
+}

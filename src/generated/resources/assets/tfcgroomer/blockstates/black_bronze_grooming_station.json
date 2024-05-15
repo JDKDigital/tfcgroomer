@@ -1,0 +1,33 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "tfcgroomer:block/black_bronze_grooming_station"
+      }
+    },
+    {
+      "apply": {
+        "model": "tfcgroomer:block/black_bronze_grooming_station"
+      },
+      "when": {
+        "level": "0"
+      }
+    },
+    {
+      "apply": {
+        "model": "tfcgroomer:block/black_bronze_grooming_station_half"
+      },
+      "when": {
+        "level": "1"
+      }
+    },
+    {
+      "apply": {
+        "model": "tfcgroomer:block/black_bronze_grooming_station_full"
+      },
+      "when": {
+        "level": "2"
+      }
+    }
+  ]
+}

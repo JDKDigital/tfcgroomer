@@ -1,0 +1,9 @@
+{
+  "parent": "tfcgroomer:block/grooming_station_level1",
+  "textures": {
+    "bottom": "tfcgroomer:block/black_steel_grooming_station_side",
+    "particle": "tfcgroomer:block/black_steel_grooming_station_side",
+    "side": "tfcgroomer:block/black_steel_grooming_station_side",
+    "top": "tfcgroomer:block/black_steel_grooming_station_top"
+  }
+}

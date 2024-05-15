@@ -1,0 +1,9 @@
+{
+  "parent": "tfcgroomer:block/grooming_station",
+  "textures": {
+    "bottom": "tfcgroomer:block/bismuth_bronze_grooming_station_side",
+    "particle": "tfcgroomer:block/bismuth_bronze_grooming_station_side",
+    "side": "tfcgroomer:block/bismuth_bronze_grooming_station_side",
+    "top": "tfcgroomer:block/bismuth_bronze_grooming_station_top"
+  }
+}
