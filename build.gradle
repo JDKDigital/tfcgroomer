@@ -133,7 +133,7 @@ dependencies {
     implementation fg.deobf("curse.maven:jei-238222:4609866")
     implementation fg.deobf("curse.maven:patchouli-306770:4636277")
     implementation fg.deobf("curse.maven:jade-324717:4654448")
-    implementation fg.deobf("curse.maven:terrafirmacraft-302973:5243565")
+    implementation fg.deobf("curse.maven:terrafirmacraft-302973:5276689")
     implementation fg.deobf("curse.maven:arborfirmacraft-877545:5242050")
 }
 

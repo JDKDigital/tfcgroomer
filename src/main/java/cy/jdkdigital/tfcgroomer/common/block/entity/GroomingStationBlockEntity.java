@@ -9,13 +9,14 @@ import net.dries007.tfc.common.blockentities.TickableInventoryBlockEntity;
 import net.dries007.tfc.common.capabilities.InventoryItemHandler;
 import net.dries007.tfc.common.capabilities.PartialItemHandler;
 import net.dries007.tfc.common.capabilities.food.FoodCapability;
-import net.dries007.tfc.common.entities.livestock.TFCAnimal;
+import net.dries007.tfc.common.entities.livestock.TFCAnimalProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -72,14 +73,16 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
                     stacks.add(stack);
                 }
             }
-            List<TFCAnimal> entities = level.getEntitiesOfClass(TFCAnimal.class, (new AABB(pos).inflate(e.range, 1d, e.range))).stream().toList();
-            if (entities.size() > 0) {
+            List<Animal> entities = level.getEntitiesOfClass(Animal.class, (new AABB(pos).inflate(e.range, 1d, e.range))).stream().toList();
+            if (!entities.isEmpty()) {
                 Player fakePlayer = FakePlayerFactory.get(serverLevel, new GameProfile(PLAYER_UUID, "grooming_station"));
-                entities.forEach(tfcAnimal -> {
-                    for (ItemStack stack: stacks) {
-                        if (!stack.isEmpty() && tfcAnimal.isHungry() && tfcAnimal.isFood(stack)) {
-                            tfcAnimal.eatFood(stack, InteractionHand.MAIN_HAND, fakePlayer);
-                            break;
+                entities.forEach(animal -> {
+                    if (animal instanceof TFCAnimalProperties tfcAnimal) {
+                        for (ItemStack stack : stacks) {
+                            if (!stack.isEmpty() && tfcAnimal.isHungry() && tfcAnimal.isFood(stack)) {
+                                tfcAnimal.eatFood(stack, InteractionHand.MAIN_HAND, fakePlayer);
+                                break;
+                            }
                         }
                     }
                 });
