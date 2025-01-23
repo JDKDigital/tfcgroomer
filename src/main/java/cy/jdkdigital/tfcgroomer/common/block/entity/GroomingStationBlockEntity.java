@@ -4,17 +4,21 @@ import com.mojang.authlib.GameProfile;
 import cy.jdkdigital.tfcgroomer.Groomer;
 import cy.jdkdigital.tfcgroomer.common.block.GroomingStation;
 import cy.jdkdigital.tfcgroomer.inventory.GroomingStationContainer;
+import net.dries007.tfc.common.TFCTags;
 import net.dries007.tfc.common.blockentities.InventoryBlockEntity;
 import net.dries007.tfc.common.blockentities.TickableInventoryBlockEntity;
 import net.dries007.tfc.common.capabilities.InventoryItemHandler;
 import net.dries007.tfc.common.capabilities.PartialItemHandler;
 import net.dries007.tfc.common.capabilities.food.FoodCapability;
 import net.dries007.tfc.common.entities.livestock.TFCAnimalProperties;
+import net.dries007.tfc.util.Helpers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Inventory;
@@ -79,7 +83,7 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
                 entities.forEach(animal -> {
                     if (animal instanceof TFCAnimalProperties tfcAnimal) {
                         for (ItemStack stack : stacks) {
-                            if (!stack.isEmpty() && tfcAnimal.isHungry() && tfcAnimal.isFood(stack)) {
+                            if (!stack.isEmpty() && tfcAnimal.isHungry() && isFood(tfcAnimal, stack)) {
                                 tfcAnimal.eatFood(stack, InteractionHand.MAIN_HAND, fakePlayer);
                                 break;
                             }
@@ -88,6 +92,10 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
                 });
             }
         }
+    }
+
+    static boolean isFood(TFCAnimalProperties tfcAnimal, ItemStack stack) {
+        return (tfcAnimal.eatsRottenFood() || !FoodCapability.isRotten(stack)) && Helpers.isItem(stack, tfcAnimal.getFoodTag());
     }
 
     public static class GroomingStationInventory extends InventoryItemHandler implements INBTSerializable<CompoundTag>
@@ -101,7 +109,7 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
 
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
-            return FoodCapability.has(stack);
+            return FoodCapability.has(stack) || stack.is(ItemTags.create(new ResourceLocation("tfc:seeds")));
         }
 
         @Override
