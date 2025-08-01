@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
@@ -44,6 +45,7 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
     static final UUID PLAYER_UUID = UUID.nameUUIDFromBytes("grooming_station".getBytes(StandardCharsets.UTF_8));
     private double range = 1;
     int counter = 1200;
+    boolean canBreed = true;
 
     public GroomingStationBlockEntity(BlockPos pPos, BlockState pBlockState) {
         this(Groomer.GROOMING_STATION_BLOCK_ENTITY.get(), pPos, pBlockState);
@@ -62,7 +64,7 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int windowID, Inventory playerInv, Player player) {
+    public AbstractContainerMenu createMenu(int windowID, @NotNull Inventory playerInv, @NotNull Player player) {
         return GroomingStationContainer.create(this, playerInv, windowID);
     }
 
@@ -82,10 +84,15 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
                 Player fakePlayer = FakePlayerFactory.get(serverLevel, new GameProfile(PLAYER_UUID, "grooming_station"));
                 entities.forEach(animal -> {
                     if (animal instanceof TFCAnimalProperties tfcAnimal) {
+                        float animalFamiliarity = tfcAnimal.getFamiliarity();
+                        boolean isChild = tfcAnimal.getAgeType() == TFCAnimalProperties.Age.CHILD;
                         for (ItemStack stack : stacks) {
                             if (!stack.isEmpty() && tfcAnimal.isHungry() && isFood(tfcAnimal, stack)) {
-                                tfcAnimal.eatFood(stack, InteractionHand.MAIN_HAND, fakePlayer);
-                                break;
+                                if ((isChild && animalFamiliarity < 1.0f) || (animalFamiliarity < tfcAnimal.getAdultFamiliarityCap())) {
+                                    tfcAnimal.eatFood(stack, InteractionHand.MAIN_HAND, fakePlayer);
+                                    break;
+                                }
+
                             }
                         }
                     }
