@@ -6,6 +6,7 @@ import net.dries007.tfc.common.capabilities.Capabilities;
 import net.dries007.tfc.common.container.BlockEntityContainer;
 import net.dries007.tfc.common.container.CallbackSlot;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.item.ItemStack;
 
 public class GroomingStationContainer extends BlockEntityContainer<GroomingStationBlockEntity>
@@ -39,5 +40,10 @@ public class GroomingStationContainer extends BlockEntityContainer<GroomingStati
             this.addSlot(new CallbackSlot(this.blockEntity, handler, 7, 80, 55));
             this.addSlot(new CallbackSlot(this.blockEntity, handler, 8, 98, 55));
         });
+    }
+
+    @Override
+    protected DataSlot addDataSlot(DataSlot pIntValue) {
+        return super.addDataSlot(pIntValue);
     }
 }

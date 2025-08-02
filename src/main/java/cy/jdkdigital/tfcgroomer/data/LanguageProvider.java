@@ -14,6 +14,7 @@ public class LanguageProvider extends net.minecraftforge.common.data.LanguagePro
     protected void addTranslations() {
         add("tfcgroomer.grooming_station.range", "Range: %s");
         add("block.tfcgroomer.grooming_station", "Grooming Station");
+        add("gui.tfcgroomer.enable_breeding", "Enable Breeding");
         Groomer.GROOMING_STATIONS.forEach(block -> {
             add(block.get(), capName(ForgeRegistries.BLOCKS.getKey(block.get()).getPath()));
         });
