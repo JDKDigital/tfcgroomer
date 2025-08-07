@@ -2,31 +2,50 @@ package cy.jdkdigital.tfcgroomer.inventory;
 
 import cy.jdkdigital.tfcgroomer.Groomer;
 import cy.jdkdigital.tfcgroomer.client.gui.widgets.MiniCheckbox;
+import cy.jdkdigital.tfcgroomer.common.block.entity.GroomingStationBlockEntity;
+import net.dries007.tfc.client.screen.BlockEntityScreen;
+import net.dries007.tfc.network.PacketHandler;
+import net.dries007.tfc.network.ScreenButtonPacket;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Checkbox;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-public class GroomingStationScreen extends AbstractContainerScreen<GroomingStationContainer>
+public class GroomingStationScreen extends BlockEntityScreen<GroomingStationBlockEntity, GroomingStationContainer>
 {
-    private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Groomer.MODID, "textures/gui/grooming_station.png");
+    private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Groomer.MODID, "textures/gui/grooming_station_small.png");
     private static final Component TOGGLE_BREED = Component.translatable("gui.tfcgroomer.enable_breeding");
     private MiniCheckbox checkbox;
 
 
+
+    public GroomingStationScreen(GroomingStationContainer container, Inventory inv, Component titleIn) {
+        super(container, inv, titleIn, GUI_TEXTURE);
+    }
+
     @Override
     protected void init() {
         super.init();
-        this.checkbox = addRenderableWidget(new MiniCheckbox(this.getGuiLeft() + 75, this.getGuiTop() + 71, TOGGLE_BREED, false, false));
+        createMiniCheckbox(leftPos + this.imageWidth - 17, topPos + 71, GroomingStationContainer.TOGGLE_BREED_ID, null);
     }
 
-    public GroomingStationScreen(GroomingStationContainer container, Inventory inv, Component titleIn) {
-        super(container, inv, titleIn);
+    private void createMiniCheckbox(int x, int y, int packetButtonId, @Nullable String translationKey) {
+        if (!this.menu.getBlockEntity().isBreedToggleEnabled()) {
+            System.out.println("Breed toggle is disabled");
+            return;
+        }
+        checkbox = new MiniCheckbox(x, y, menu.getBlockEntity().breedingEnabled, btn -> {
+            checkbox.setSelected(!checkbox.isSelected());
+            PacketHandler.send(PacketDistributor.SERVER.noArg(), new ScreenButtonPacket(packetButtonId, null));});
+        if (translationKey != null) {
+            checkbox.setTooltip(Tooltip.create(Component.translatable(translationKey)));
+        }
+        addRenderableWidget(checkbox);
     }
 
     @Override
@@ -40,8 +59,11 @@ public class GroomingStationScreen extends AbstractContainerScreen<GroomingStati
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         guiGraphics.drawString(font, this.title, 8, 6, 4210752, false);
         guiGraphics.drawString(font, this.playerInventoryTitle, 8, (this.getYSize() - 96 + 2), 4210752, false);
-        guiGraphics.drawString(font, TOGGLE_BREED, 88, 72, 4210752, false);
-
+        guiGraphics.drawString(font, Component.literal(String.valueOf(menu.getBreedToggleState(menu.getBlockEntity()))), 8, this.getYSize() + 2, 16777215, true);
+        guiGraphics.drawString(font, Component.literal(String.valueOf(menu.getBlockEntity().getSyncData().get(0))), 8, this.getYSize() + 12, 16777215, true);
+        if (this.menu.getBlockEntity().isBreedToggleEnabled()) {
+            guiGraphics.drawString(font, TOGGLE_BREED, this.imageWidth - 99, 72, 4210752, false);
+        }
     }
 
     @Override
@@ -50,7 +72,4 @@ public class GroomingStationScreen extends AbstractContainerScreen<GroomingStati
         guiGraphics.blit(GUI_TEXTURE, this.getGuiLeft(), this.getGuiTop(), 0, 0, this.getXSize() + 26, this.getYSize());
     }
 
-    private void handleCheckbox(Checkbox checkbox) {
-
-    }
 }
