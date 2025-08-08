@@ -5,6 +5,7 @@ import com.mojang.logging.LogUtils;
 import cy.jdkdigital.tfcgroomer.common.block.GroomingStation;
 import cy.jdkdigital.tfcgroomer.common.block.entity.GroomingStationBlockEntity;
 import cy.jdkdigital.tfcgroomer.common.item.GroomingStationItem;
+import cy.jdkdigital.tfcgroomer.config.GroomerConfig;
 import cy.jdkdigital.tfcgroomer.inventory.GroomingStationContainer;
 import net.dries007.tfc.common.blockentities.InventoryBlockEntity;
 import net.dries007.tfc.common.blocks.ExtendedProperties;
@@ -93,6 +94,8 @@ public class Groomer
         ITEMS.register(modEventBus);
         BLOCK_ENTITY.register(modEventBus);
         CONTAINER_TYPES.register(modEventBus);
+
+        GroomerConfig.init();
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);

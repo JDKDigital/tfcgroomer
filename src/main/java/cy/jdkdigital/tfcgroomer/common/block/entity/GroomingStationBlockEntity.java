@@ -3,6 +3,7 @@ package cy.jdkdigital.tfcgroomer.common.block.entity;
 import com.mojang.authlib.GameProfile;
 import cy.jdkdigital.tfcgroomer.Groomer;
 import cy.jdkdigital.tfcgroomer.common.block.GroomingStation;
+import cy.jdkdigital.tfcgroomer.config.GroomerConfig;
 import cy.jdkdigital.tfcgroomer.inventory.GroomingStationContainer;
 import net.dries007.tfc.common.blockentities.InventoryBlockEntity;
 import net.dries007.tfc.common.blockentities.TickableInventoryBlockEntity;
@@ -29,6 +30,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
@@ -45,11 +47,11 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
     private static final Component NAME = Component.translatable("block.tfcgroomer.grooming_station"); // TODO: add localization
     static final UUID PLAYER_UUID = UUID.nameUUIDFromBytes("grooming_station".getBytes(StandardCharsets.UTF_8));
     private double range = 1;
-    int counter = 1200;
+    int counter;
 
     public static void tickServer(Level level, BlockPos pos, BlockState state, GroomingStationBlockEntity gstation) {
         if (gstation.counter-- <= 0 && level instanceof ServerLevel serverLevel) {
-            gstation.counter = 200;
+            gstation.counter = GroomerConfig.SERVER.groomingStationTicks.get();
             // Inventory updates
             List<ItemStack> stacks = new ArrayList<>();
             for (int i = 0; i < gstation.inventory.getSlots(); i++) {
@@ -84,22 +86,19 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
 
     protected final ContainerData syncData;
     public boolean breedingEnabled; // Can Grooming Station feed animals capable of breeding
-    private boolean breedToggleEnabled; // TODO: Is the option to toggle breeding enabled - controlled by config
 
     public GroomingStationBlockEntity(BlockPos pos, BlockState state) {
 //        this(Groomer.GROOMING_STATION_BLOCK_ENTITY.get(), pPos, pBlockState);
         super(Groomer.GROOMING_STATION_BLOCK_ENTITY.get(), pos, state, GroomingStationInventory::new, NAME);
 
-        breedingEnabled = false;
-        breedToggleEnabled = true;
+        breedingEnabled = GroomerConfig.SERVER.breedingEnabledByDefault.get();
         syncData = new IntArrayBuilder().add(() -> toInt(this.breedingEnabled), value -> breedingEnabled = toBool(value));
 
-        // TODO: if (GroomerConfig.groomingStationEnableAutomation.get())
-//        {
+         if (getValueOrDefault(GroomerConfig.SERVER.groomingStationEnableAutomation)) {
             sidedInventory
                     .on(new PartialItemHandler(inventory).insert(0, 1, 2, 3), d -> d != Direction.DOWN)
                     .on(new PartialItemHandler(inventory).extract(0, 1, 2, 3), Direction.DOWN);
-//        }
+        }
 
         if (state.getBlock() instanceof GroomingStation groomingStation) {
             this.range = groomingStation.range;
@@ -111,11 +110,11 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
     }
 
     public void setBreedingEnabled(boolean b) {
+        if (!GroomerConfig.SERVER.enableBreedingToggle.get()) {
+            Groomer.LOGGER.info("Breeding toggling is disabled by server config. How did you even call this?");
+            return;
+        }
         this.breedingEnabled = b;
-    }
-
-    public boolean isBreedToggleEnabled() {
-        return breedToggleEnabled;
     }
 
     @Nullable
@@ -126,15 +125,17 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
 
     @Override
     public void loadAdditional(CompoundTag nbt) {
-//        this.breedToggleEnabled = nbt.getBoolean("isBreedToggleEnabled");
-        this.breedingEnabled = nbt.getBoolean("isBreedingEnabled");
+        if (nbt.contains("breedingEnabled")) {
+            this.breedingEnabled = nbt.getBoolean("breedingEnabled");
+        } else {
+            this.breedingEnabled = GroomerConfig.SERVER.breedingEnabledByDefault.get();
+        }
 
         super.loadAdditional(nbt);
     }
 
     @Override
     public void saveAdditional(CompoundTag nbt) {
-        nbt.putBoolean("breedToggleEnabled", this.breedToggleEnabled);
         nbt.putBoolean("breedingEnabled", this.breedingEnabled);
 
         super.saveAdditional(nbt);
@@ -183,4 +184,8 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
     private static int toInt(boolean b) {return b ? 1 : 0;}
 
     private static boolean toBool(int i) {return i >= 1;}
+
+    private static <T> T getValueOrDefault(ForgeConfigSpec.ConfigValue<T> value) {
+        return GroomerConfig.isServerConfigLoaded()? value.get() : value.getDefault();
+    }
 }

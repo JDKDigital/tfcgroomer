@@ -3,6 +3,7 @@ package cy.jdkdigital.tfcgroomer.inventory;
 import cy.jdkdigital.tfcgroomer.Groomer;
 import cy.jdkdigital.tfcgroomer.client.gui.widgets.MiniCheckbox;
 import cy.jdkdigital.tfcgroomer.common.block.entity.GroomingStationBlockEntity;
+import cy.jdkdigital.tfcgroomer.config.GroomerConfig;
 import net.dries007.tfc.client.screen.BlockEntityScreen;
 import net.dries007.tfc.network.PacketHandler;
 import net.dries007.tfc.network.ScreenButtonPacket;
@@ -31,14 +32,12 @@ public class GroomingStationScreen extends BlockEntityScreen<GroomingStationBloc
     @Override
     protected void init() {
         super.init();
-        createMiniCheckbox(leftPos + this.imageWidth - 17, topPos + 71, GroomingStationContainer.TOGGLE_BREED_ID, null);
+        if (GroomerConfig.SERVER.enableBreedingToggle.get()) {
+            createMiniCheckbox(leftPos + this.imageWidth - 17, topPos + 71, GroomingStationContainer.TOGGLE_BREED_ID, null);
+        }
     }
 
     private void createMiniCheckbox(int x, int y, int packetButtonId, @Nullable String translationKey) {
-        if (!this.menu.getBlockEntity().isBreedToggleEnabled()) {
-            System.out.println("Breed toggle is disabled");
-            return;
-        }
         checkbox = new MiniCheckbox(x, y, menu.getBlockEntity().breedingEnabled, btn -> {
             checkbox.setSelected(!checkbox.isSelected());
             PacketHandler.send(PacketDistributor.SERVER.noArg(), new ScreenButtonPacket(packetButtonId, null));});
@@ -61,7 +60,7 @@ public class GroomingStationScreen extends BlockEntityScreen<GroomingStationBloc
         guiGraphics.drawString(font, this.playerInventoryTitle, 8, (this.getYSize() - 96 + 2), 4210752, false);
         guiGraphics.drawString(font, Component.literal(String.valueOf(menu.getBreedToggleState(menu.getBlockEntity()))), 8, this.getYSize() + 2, 16777215, true);
         guiGraphics.drawString(font, Component.literal(String.valueOf(menu.getBlockEntity().getSyncData().get(0))), 8, this.getYSize() + 12, 16777215, true);
-        if (this.menu.getBlockEntity().isBreedToggleEnabled()) {
+        if (GroomerConfig.SERVER.enableBreedingToggle.get()) {
             guiGraphics.drawString(font, TOGGLE_BREED, this.imageWidth - 99, 72, 4210752, false);
         }
     }
