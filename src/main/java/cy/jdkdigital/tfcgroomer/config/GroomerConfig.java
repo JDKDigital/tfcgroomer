@@ -8,7 +8,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.function.Function;
 
 public final class GroomerConfig {
-//    public static final ClientConfig CLIENT = register(ModConfig.Type.CLIENT, ClientConfig::new, "client").getKey();
+    public static final ClientConfig CLIENT = register(ModConfig.Type.CLIENT, ClientConfig::new, "client").getKey();
     public static final ServerConfig SERVER;
 
     private static final ForgeConfigSpec SERVER_SPEC;
