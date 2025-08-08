@@ -50,10 +50,33 @@ public class Groomer
     public static List<RegistryObject<GroomingStationItem>> GROOMING_STATION_ITEMS = new ArrayList<>();
 
     static {
-        GROOMING_STATION_BLOCK_ENTITY = BLOCK_ENTITY.register("grooming_station", () -> new BlockEntityType.Builder<>(GroomingStationBlockEntity::new, ImmutableSet.copyOf(GROOMING_STATIONS.stream().map(RegistryObject::get).toList())).build(null));
+        GROOMING_STATION_BLOCK_ENTITY = BLOCK_ENTITY.register(
+                "grooming_station",
+                () -> new BlockEntityType.Builder<>(
+                        GroomingStationBlockEntity::new,
+                        ImmutableSet.copyOf(GROOMING_STATIONS.stream().map(RegistryObject::get).toList())
+                ).build(null)
+        );
         Arrays.stream(Metal.Default.values()).filter(Metal.Default::hasUtilities).forEach(metal -> {
-            var GROOMING_STATION = BLOCKS.register(metal.getSerializedName() + "_grooming_station", () -> new GroomingStation(ExtendedProperties.of().instrument(NoteBlockInstrument.BANJO).mapColor(metal.mapColor()).noOcclusion().sound(SoundType.METAL).strength(10.0F, 10.0F).requiresCorrectToolForDrops().ticks(GroomingStationBlockEntity::tickServer).blockEntity(GROOMING_STATION_BLOCK_ENTITY), metal.metalTier().ordinal()));
-            var GROOMING_STATION_ITEM = ITEMS.register(metal.getSerializedName() + "_grooming_station", () -> new GroomingStationItem(GROOMING_STATION.get(), new Item.Properties()));
+            var GROOMING_STATION = BLOCKS.register(
+                    metal.getSerializedName() + "_grooming_station",
+                    () -> new GroomingStation(
+                            ExtendedProperties.of()
+                                    .instrument(NoteBlockInstrument.BANJO)
+                                    .mapColor(metal.mapColor())
+                                    .noOcclusion()
+                                    .sound(SoundType.METAL)
+                                    .strength(10.0F, 10.0F)
+                                    .requiresCorrectToolForDrops()
+                                    .ticks(GroomingStationBlockEntity::tickServer)
+                                    .blockEntity(GROOMING_STATION_BLOCK_ENTITY),
+                            metal.metalTier().ordinal()
+                    )
+            );
+            var GROOMING_STATION_ITEM = ITEMS.register(
+                    metal.getSerializedName() + "_grooming_station",
+                    () -> new GroomingStationItem(GROOMING_STATION.get(), new Item.Properties())
+            );
 
             GROOMING_STATIONS.add(GROOMING_STATION);
             GROOMING_STATION_ITEMS.add(GROOMING_STATION_ITEM);
