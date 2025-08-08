@@ -32,39 +32,29 @@ public class ServerConfig {
     // TODO: comparator outputs
     public final ForgeConfigSpec.BooleanValue groomingStationRedstoneOutput;
 
-    ServerConfig(ConfigBuilder builder) {
+    ServerConfig(ForgeConfigSpec.Builder builder) {
         builder.push("general");
 
-        enableBreedingToggle = builder.comment("Enable option to toggle automatic breeding of animals by a Grooming Station.").define("enableBreedingToggle", true);
+        enableBreedingToggle = builder.comment("Enable option to toggle automatic breeding of animals by a Grooming Station on a block-to-block basis.").define("enableBreedingToggle", true);
         breedingEnabledByDefault = builder.comment("If true, grooming stations will automatically breed animals together when feeding.").define("breedingEnabledByDefault", false);
 
-        groomingStationTicks = builder.comment("How often (in ticks) the Grooming Station checks for animals to feed.").define("groomingStationTicks", 20, 1200, 6000);
+        groomingStationTicks = builder.comment("How much time (in ticks) the Grooming Station waits before checking for animals to feed.").defineInRange("groomingStationTicks", 20, 1200, 6000);
 
-        builder.swap("range tiers");
+        builder.pop().push("tiers");
 
-        rangeBlocks = new EnumMap<>(Metal.class);
+        rangeBlocks = new EnumMap<>(Metal.Default.class);
         for (Metal.Default metal : Metal.Default.values()) {
             if (metal.hasUtilities()) {
                 final String valueName = String.format("%sRangeBlocks", metal.getSerializedName());
-                rangeBlocks.put(metal, builder.comment(String.format("The maximum range a %s grooming station will scan for animals", metal.getSerializedName())).define(valueName, metal.metalTier().ordinal(), 1, Integer.MAX_VALUE));
+                rangeBlocks.put(metal, builder.comment(String.format("The maximum distance a %s grooming station will scan for animals to feed", metal.getSerializedName())).defineInRange(valueName, metal.metalTier().ordinal(), 1, Integer.MAX_VALUE));
             }
         }
 
-//        rangeCopper = builder.comment("The maximum range a copper grooming station will scan for animals").define("rangeCopper", 1, 1, 100);
-//        rangeBronze = builder.comment("The maximum range a bronze grooming station will scan for animals").define("rangeBronze", 2, 1, 100);
-//        rangeBismuthBronze = builder.comment("The maximum range a bismuth bronze grooming station will scan for animals").define("rangeBismuthBronze", 2, 1, 100);
-//        rangeBlackBronze = builder.comment("The maximum range a black bronze grooming station will scan for animals").define("rangeBlackBronze", 2, 1, 100);
-//        rangeWroughtIron = builder.comment("The maximum range a wrought iron grooming station will scan for animals").define("rangeWroughtIron", 3, 1, 100);
-//        rangeSteel = builder.comment("The maximum range a steel grooming station will scan for animals").define("rangeSteel", 4, 1, 100);
-//        rangeBlackSteel = builder.comment("The maximum range a black steel grooming station will scan for animals").define("rangeBlackSteel", 5, 1, 100);
-//        rangeBlueSteel = builder.comment("The maximum range a blue steel grooming station will scan for animals").define("rangeBlueSteel", 6, 1, 100);
-//        rangeRedSteel = builder.comment("The maximum range a red steel grooming station will scan for animals").define("rangeRedSteel", 6, 1, 100);
-
-        builder.swap("allowed animals");
+        builder.pop().push("whitelist");
 
         // TODO: Animal Blacklist
 
-        builder.swap("automation");
+        builder.pop().push("automation");
 
         groomingStationEnableAutomation = builder.comment("If true, grooming stations will interact with in-world automation such as hoppers on a side-specific basis.").define("groomingStationEnableAutomation", true);
 

@@ -94,7 +94,7 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
         breedingEnabled = GroomerConfig.SERVER.breedingEnabledByDefault.get();
         syncData = new IntArrayBuilder().add(() -> toInt(this.breedingEnabled), value -> breedingEnabled = toBool(value));
 
-         if (getValueOrDefault(GroomerConfig.SERVER.groomingStationEnableAutomation)) {
+         if (GroomerConfig.SERVER.groomingStationEnableAutomation.get()) {
             sidedInventory
                     .on(new PartialItemHandler(inventory).insert(0, 1, 2, 3), d -> d != Direction.DOWN)
                     .on(new PartialItemHandler(inventory).extract(0, 1, 2, 3), Direction.DOWN);
@@ -185,7 +185,7 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
 
     private static boolean toBool(int i) {return i >= 1;}
 
-    private static <T> T getValueOrDefault(ForgeConfigSpec.ConfigValue<T> value) {
-        return GroomerConfig.isServerConfigLoaded()? value.get() : value.getDefault();
-    }
+//    private static <T> T getValueOrDefault(ForgeConfigSpec.ConfigValue<T> value) {
+//        return GroomerConfig.isServerConfigLoaded()? value.get() : value.getDefault();
+//    }
 }
