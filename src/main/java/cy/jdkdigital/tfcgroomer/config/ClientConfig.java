@@ -1,19 +1,18 @@
 package cy.jdkdigital.tfcgroomer.config;
 
-import net.dries007.tfc.config.ConfigBuilder;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ClientConfig {
 
-    public final ForgeConfigSpec.BooleanValue showBreedingToggleStateInInfoMods;
-    public final ForgeConfigSpec.BooleanValue showInventoryInInfoMods;
+    public final ForgeConfigSpec.BooleanValue showBreedingToggleStateInJade;
+    public final ForgeConfigSpec.BooleanValue showFoodRotInJade;
 
-    ClientConfig(ForgeConfigSpec.Builder builder) {
+    ClientConfig(ConfigBuilderWrapper builder) {
         builder.push("display");
 
-        showBreedingToggleStateInInfoMods = builder.comment("If true, mods like Jade that add info when hovering on a block will display the grooming station's current breeding toggle state.").define("showBreedingToggleStateInInfoMods", false);
+        showBreedingToggleStateInJade = builder.comment("If true, Jade (if installed) will display the grooming station's current breeding toggle state.").define("showBreedingToggleStateInJade", false);
 
-        showInventoryInInfoMods = builder.comment("If true, mods like Jade that add info when hovering on a block will display a count of the grooming station's current food inventory.").define("showInventoryInInfoMods", false);
+        showFoodRotInJade = builder.comment("If true, Jade (if installed) will display a count of the grooming station's current food inventory.").define("showFoodRotInJade", false);
 
         builder.pop();
     }
