@@ -62,15 +62,14 @@ public class Groomer
             var GROOMING_STATION = BLOCKS.register(
                     metal.getSerializedName() + "_grooming_station",
                     () -> new GroomingStation(
-                            ExtendedProperties.of()
-                                    .instrument(NoteBlockInstrument.BANJO)
-                                    .mapColor(metal.mapColor())
-                                    .noOcclusion()
+                            ExtendedProperties.of(metal.mapColor())
                                     .sound(SoundType.METAL)
+                                    .instrument(NoteBlockInstrument.BANJO)
+                                    .noOcclusion()
                                     .strength(10.0F, 10.0F)
                                     .requiresCorrectToolForDrops()
-                                    .ticks(GroomingStationBlockEntity::tickServer)
-                                    .blockEntity(GROOMING_STATION_BLOCK_ENTITY),
+                                    .blockEntity(GROOMING_STATION_BLOCK_ENTITY)
+                                    .ticks(GroomingStationBlockEntity::tickServer),
                             metal.metalTier().ordinal()
                     )
             );
