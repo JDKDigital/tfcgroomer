@@ -1,6 +1,5 @@
 package cy.jdkdigital.tfcgroomer.config;
 
-import net.dries007.tfc.config.ConfigBuilder;
 import net.dries007.tfc.util.Metal;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -19,47 +18,57 @@ public class ServerConfig {
     // TODO: Animal blacklist
 
     public final EnumMap<Metal.Default, ForgeConfigSpec.IntValue> rangeBlocks;
-//    public final ForgeConfigSpec.IntValue rangeCopper;
-//    public final ForgeConfigSpec.IntValue rangeBronze;
-//    public final ForgeConfigSpec.IntValue rangeBismuthBronze;
-//    public final ForgeConfigSpec.IntValue rangeBlackBronze;
-//    public final ForgeConfigSpec.IntValue rangeWroughtIron;
-//    public final ForgeConfigSpec.IntValue rangeSteel;
-//    public final ForgeConfigSpec.IntValue rangeBlackSteel;
-//    public final ForgeConfigSpec.IntValue rangeBlueSteel;
-//    public final ForgeConfigSpec.IntValue rangeRedSteel;
 
     // TODO: comparator outputs
     public final ForgeConfigSpec.BooleanValue groomingStationRedstoneOutput;
 
-    ServerConfig(ForgeConfigSpec.Builder builder) {
+    ServerConfig(ConfigBuilderWrapper builder) {
         builder.push("general");
 
         enableBreedingToggle = builder.comment("Enable option to toggle automatic breeding of animals by a Grooming Station on a block-to-block basis.").define("enableBreedingToggle", true);
         breedingEnabledByDefault = builder.comment("If true, grooming stations will automatically breed animals together when feeding.").define("breedingEnabledByDefault", false);
 
-        groomingStationTicks = builder.comment("How much time (in ticks) the Grooming Station waits before checking for animals to feed.").defineInRange("groomingStationTicks", 20, 1200, 6000);
+        groomingStationTicks = builder.comment("How much time (in ticks) the Grooming Station waits before checking for animals to feed.").define("groomingStationTicks", 20, 1200, 6000);
 
-        builder.pop().push("tiers");
+        builder.swap("tiers");
 
         rangeBlocks = new EnumMap<>(Metal.Default.class);
         for (Metal.Default metal : Metal.Default.values()) {
             if (metal.hasUtilities()) {
-                final String valueName = String.format("%sRangeBlocks", metal.getSerializedName());
-                rangeBlocks.put(metal, builder.comment(String.format("The maximum distance a %s grooming station will scan for animals to feed", metal.getSerializedName())).defineInRange(valueName, metal.metalTier().ordinal(), 1, Integer.MAX_VALUE));
+                final String valueName = String.format("rangeBlocks%s", Helpers.toCamelCase(metal.getSerializedName()));
+                rangeBlocks.put(metal, builder
+                        .comment(String.format("The maximum distance a %s grooming station will scan for animals to feed", metal.getSerializedName()
+                        .replace("_", " ")))
+                        .define(valueName, metal.metalTier().ordinal(), 1, Integer.MAX_VALUE)
+                );
             }
         }
 
-        builder.pop().push("whitelist");
+        builder.swap("whitelist");
 
         // TODO: Animal Blacklist
 
-        builder.pop().push("automation");
+        builder.swap("automation");
 
         groomingStationEnableAutomation = builder.comment("If true, grooming stations will interact with in-world automation such as hoppers on a side-specific basis.").define("groomingStationEnableAutomation", true);
 
         groomingStationRedstoneOutput = builder.comment("If true, the Grooming Station emits a redstone signal proportional to how full it is.").define("groomingStationRedstoneOutput", true);
 
         builder.pop();
+    }
+
+    private static final class Helpers {
+        public static String toCamelCase(String string) {
+            String[] words = string.split("_");
+            StringBuilder result = new StringBuilder();
+            for (String word: words) {
+                if (word.isEmpty()) continue;
+                word = word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
+                result.append(word);
+            }
+            return result.toString();
+        }
+
+
     }
 }
