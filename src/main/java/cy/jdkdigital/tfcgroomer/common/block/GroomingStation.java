@@ -18,16 +18,18 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public class GroomingStation extends DeviceBlock
 {
     protected static final VoxelShape SHAPE = Block.box(0.0D, 4.0D, 0.0D, 16.0D, 12.0D, 16.0D);
     public static final IntegerProperty LEVEL = IntegerProperty.create("level", 0, 2);
-    public final double range;
 
-    public GroomingStation(ExtendedProperties pProperties, double range) {
+    public final int range;
+
+    public GroomingStation(ExtendedProperties pProperties, ForgeConfigSpec.IntValue range) {
         super(pProperties, InventoryRemoveBehavior.DROP);
-        this.range = range;
+        this.range = range.get();
         this.registerDefaultState(this.stateDefinition.any().setValue(LEVEL, 0));
     }
 

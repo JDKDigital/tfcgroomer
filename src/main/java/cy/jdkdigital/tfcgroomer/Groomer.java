@@ -70,7 +70,7 @@ public class Groomer
                                     .requiresCorrectToolForDrops()
                                     .blockEntity(GROOMING_STATION_BLOCK_ENTITY)
                                     .ticks(GroomingStationBlockEntity::tickServer),
-                            metal.metalTier().ordinal()
+                            GroomerConfig.SERVER.rangeBlocks.get(metal)
                     )
             );
             var GROOMING_STATION_ITEM = ITEMS.register(
@@ -87,7 +87,7 @@ public class Groomer
     public static final RegistryObject<MenuType<GroomingStationContainer>> GROOMING_STATION_MENU = Groomer.<GroomingStationBlockEntity, GroomingStationContainer>registerBlock("grooming_station", GROOMING_STATION_BLOCK_ENTITY, GroomingStationContainer::create);
 
     public Groomer() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
