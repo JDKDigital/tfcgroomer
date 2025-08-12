@@ -21,7 +21,7 @@ public class GroomingStationItem extends BlockItem
     @Override
     public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
         if (this.getBlock() instanceof GroomingStation groomingStation) {
-            pTooltip.add(Component.translatable(Groomer.MODID + ".grooming_station.range", groomingStation.range));
+            pTooltip.add(Component.translatable(Groomer.MODID + ".grooming_station.range", groomingStation.getRange()));
         }
         super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
     }

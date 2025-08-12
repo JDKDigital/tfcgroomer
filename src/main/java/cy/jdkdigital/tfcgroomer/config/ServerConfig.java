@@ -28,18 +28,16 @@ public class ServerConfig {
         enableBreedingToggle = builder.comment("Enable option to toggle automatic breeding of animals by a Grooming Station on a block-to-block basis.").define("enableBreedingToggle", true);
         breedingEnabledByDefault = builder.comment("If true, grooming stations will automatically breed animals together when feeding.").define("breedingEnabledByDefault", false);
 
-        groomingStationTicks = builder.comment("How much time (in ticks) the Grooming Station waits before checking for animals to feed.").define("groomingStationTicks", 20, 1200, 6000);
+        groomingStationTicks = builder.comment("How much time (in ticks) the Grooming Station waits before checking for animals to feed.").define("groomingStationTicks", 1200, 20, 6000);
 
-        builder.swap("tiers");
+        builder.swap("tier_ranges");
 
         rangeBlocks = new EnumMap<>(Metal.Default.class);
         for (Metal.Default metal : Metal.Default.values()) {
             if (metal.hasUtilities()) {
-                final String valueName = String.format("rangeBlocks%s", Helpers.toCamelCase(metal.getSerializedName()));
                 rangeBlocks.put(metal, builder
-                        .comment(String.format("The maximum distance a %s grooming station will scan for animals to feed", metal.getSerializedName()
-                        .replace("_", " ")))
-                        .define(valueName, metal.metalTier().ordinal(), 1, Integer.MAX_VALUE)
+                        .comment(String.format("The maximum distance in blocks a %s grooming station will scan for animals to feed", metal.getSerializedName().replace("_", " ")))
+                        .define(metal.getSerializedName(), metal.metalTier().ordinal(), 1, Integer.MAX_VALUE)
                 );
             }
         }
@@ -57,18 +55,4 @@ public class ServerConfig {
         builder.pop();
     }
 
-    private static final class Helpers {
-        public static String toCamelCase(String string) {
-            String[] words = string.split("_");
-            StringBuilder result = new StringBuilder();
-            for (String word: words) {
-                if (word.isEmpty()) continue;
-                word = word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
-                result.append(word);
-            }
-            return result.toString();
-        }
-
-
-    }
 }

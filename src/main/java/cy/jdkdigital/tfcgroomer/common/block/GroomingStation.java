@@ -1,9 +1,12 @@
 package cy.jdkdigital.tfcgroomer.common.block;
 
 import cy.jdkdigital.tfcgroomer.Groomer;
+import cy.jdkdigital.tfcgroomer.config.GroomerConfig;
+import cy.jdkdigital.tfcgroomer.config.ServerConfig;
 import net.dries007.tfc.common.blocks.ExtendedProperties;
 import net.dries007.tfc.common.blocks.devices.DeviceBlock;
 import net.dries007.tfc.util.Helpers;
+import net.dries007.tfc.util.Metal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -18,18 +21,19 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class GroomingStation extends DeviceBlock
 {
     protected static final VoxelShape SHAPE = Block.box(0.0D, 4.0D, 0.0D, 16.0D, 12.0D, 16.0D);
     public static final IntegerProperty LEVEL = IntegerProperty.create("level", 0, 2);
 
-    public final int range;
+    public final Metal.Default metal;
 
-    public GroomingStation(ExtendedProperties pProperties, ForgeConfigSpec.IntValue range) {
+    public GroomingStation(ExtendedProperties pProperties, Metal.Default metal) {
         super(pProperties, InventoryRemoveBehavior.DROP);
-        this.range = range.get();
+        this.metal = metal;
         this.registerDefaultState(this.stateDefinition.any().setValue(LEVEL, 0));
     }
 
@@ -51,5 +55,12 @@ public class GroomingStation extends DeviceBlock
         });
 
         return InteractionResult.SUCCESS;
+    }
+
+    /**
+     * range is controlled by server config instead of by block definition
+     */
+    public int getRange() {
+        return GroomerConfig.SERVER.rangeBlocks.get(this.metal).get();
     }
 }

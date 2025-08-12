@@ -6,6 +6,7 @@ import cy.jdkdigital.tfcgroomer.common.block.GroomingStation;
 import cy.jdkdigital.tfcgroomer.common.block.entity.GroomingStationBlockEntity;
 import cy.jdkdigital.tfcgroomer.common.item.GroomingStationItem;
 import cy.jdkdigital.tfcgroomer.config.GroomerConfig;
+import cy.jdkdigital.tfcgroomer.config.ServerConfig;
 import cy.jdkdigital.tfcgroomer.inventory.GroomingStationContainer;
 import net.dries007.tfc.common.blockentities.InventoryBlockEntity;
 import net.dries007.tfc.common.blocks.ExtendedProperties;
@@ -20,17 +21,20 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.IConfigEvent;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.function.Supplier;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -70,7 +74,7 @@ public class Groomer
                                     .requiresCorrectToolForDrops()
                                     .blockEntity(GROOMING_STATION_BLOCK_ENTITY)
                                     .ticks(GroomingStationBlockEntity::tickServer),
-                            GroomerConfig.SERVER.rangeBlocks.get(metal)
+                            metal
                     )
             );
             var GROOMING_STATION_ITEM = ITEMS.register(
