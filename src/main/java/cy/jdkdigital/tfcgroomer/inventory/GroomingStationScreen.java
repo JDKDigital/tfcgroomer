@@ -60,8 +60,6 @@ public class GroomingStationScreen extends BlockEntityScreen<GroomingStationBloc
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         guiGraphics.drawString(font, this.title, 8, 6, 4210752, false);
         guiGraphics.drawString(font, this.playerInventoryTitle, 8, (this.getYSize() - 96 + 2), 4210752, false);
-        guiGraphics.drawString(font, Component.literal(String.valueOf(menu.getBreedToggleState(menu.getBlockEntity()))), 8, this.getYSize() + 2, 16777215, true);
-        guiGraphics.drawString(font, Component.literal(String.valueOf(menu.getBlockEntity().getSyncData().get(0))), 8, this.getYSize() + 12, 16777215, true);
         if (GroomerConfig.SERVER.enableBreedingToggle.get()) {
             guiGraphics.drawString(font, TOGGLE_BREED, this.imageWidth - 99, 72, 4210752, false);
         }
