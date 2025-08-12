@@ -11,8 +11,8 @@
   "block.tfcgroomer.wrought_iron_grooming_station": "Wrought Iron Grooming Station",
   "tfcgroomer.grooming_station.range": "Range: %s",
   "gui.tfcgroomer.enable_breeding": "Enable Breeding",
-  "config.jade.plugin_tfcgroomer.grooming_station": "Grooming Station",
+  "tfcgroomer.tooltip.toggleBreeding": "Toggle Breeding",
   "tfcgroomer.tooltip.breedDisabled": "Breeding Disabled",
   "tfcgroomer.tooltip.breedEnabled": "Breeding Enabled",
-  "tfcgroomer.tooltip.toggleBreeding": "Toggle Breeding"
+  "config.jade.plugin_tfcgroomer.grooming_station": "Grooming Station"
 }

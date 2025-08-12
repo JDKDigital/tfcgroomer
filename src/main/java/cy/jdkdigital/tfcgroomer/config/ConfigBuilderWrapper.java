@@ -10,9 +10,10 @@ import java.util.function.Predicate;
 /**
  * Shamelessly cribbed from {@link net.dries007.tfc.config.ConfigBuilder}
  */
+@SuppressWarnings("unused")
 public class ConfigBuilderWrapper {
     private final ForgeConfigSpec.Builder builder;
-    private String translationKeyPrefix;
+    private final String translationKeyPrefix;
     private boolean emptyLineAdded;
 
     public ConfigBuilderWrapper(ForgeConfigSpec.Builder builder, String translationKeyPrefix) {

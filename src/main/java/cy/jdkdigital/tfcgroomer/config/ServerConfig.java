@@ -1,6 +1,6 @@
 package cy.jdkdigital.tfcgroomer.config;
 
-import net.dries007.tfc.util.Metal;
+ import net.dries007.tfc.util.Metal;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.EnumMap;
@@ -11,16 +11,17 @@ public class ServerConfig {
     public final ForgeConfigSpec.BooleanValue enableBreedingToggle;
     public final ForgeConfigSpec.BooleanValue breedingEnabledByDefault;
 
-    // Misc
     public final ForgeConfigSpec.IntValue groomingStationTicks;
+
+    // per-tier ranges
+    public final EnumMap<Metal.Default, ForgeConfigSpec.IntValue> rangeBlocks;
+
+    // Misc
     public final ForgeConfigSpec.BooleanValue groomingStationEnableAutomation;
+    public final ForgeConfigSpec.BooleanValue groomingStationRedstoneOutput;
 
     // TODO: Animal blacklist
 
-    public final EnumMap<Metal.Default, ForgeConfigSpec.IntValue> rangeBlocks;
-
-    // TODO: comparator outputs
-    public final ForgeConfigSpec.BooleanValue groomingStationRedstoneOutput;
 
     ServerConfig(ConfigBuilderWrapper builder) {
         builder.push("general");
@@ -50,7 +51,7 @@ public class ServerConfig {
 
         groomingStationEnableAutomation = builder.comment("If true, grooming stations will interact with in-world automation such as hoppers on a side-specific basis.").define("groomingStationEnableAutomation", true);
 
-        groomingStationRedstoneOutput = builder.comment("If true, the Grooming Station emits a redstone signal proportional to how full it is.").define("groomingStationRedstoneOutput", true);
+        groomingStationRedstoneOutput = builder.comment("If true, the Grooming Station will emit a redstone signal proportional to how full it is.").define("groomingStationRedstoneOutput", true);
 
         builder.pop();
     }

@@ -38,6 +38,7 @@ public class GroomingStationScreen extends BlockEntityScreen<GroomingStationBloc
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void createMiniCheckbox(int x, int y, int packetButtonId, @Nullable String translationKey) {
         checkbox = new MiniCheckbox(x, y, menu.getBlockEntity().breedingEnabled, btn -> {
             checkbox.setSelected(!checkbox.isSelected());

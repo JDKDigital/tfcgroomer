@@ -10,8 +10,8 @@ import net.dries007.tfc.common.blockentities.TickableInventoryBlockEntity;
 import net.dries007.tfc.common.capabilities.InventoryItemHandler;
 import net.dries007.tfc.common.capabilities.PartialItemHandler;
 import net.dries007.tfc.common.capabilities.food.FoodCapability;
+import net.dries007.tfc.common.capabilities.size.ItemSizeManager;
 import net.dries007.tfc.common.entities.livestock.TFCAnimalProperties;
-import net.dries007.tfc.util.Helpers;
 import net.dries007.tfc.util.IntArrayBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,6 +20,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Inventory;
@@ -48,40 +49,52 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
     private double range = 1;
     int counter;
 
-    public static void tickServer(Level level, BlockPos pos, BlockState state, GroomingStationBlockEntity gstation) {
-        if (gstation.counter-- <= 0 && level instanceof ServerLevel serverLevel) {
-            gstation.counter = GroomerConfig.SERVER.groomingStationTicks.get();
-            // Inventory updates
-            List<ItemStack> stacks = new ArrayList<>();
-            for (int i = 0; i < gstation.inventory.getSlots(); i++) {
-                var stack = gstation.inventory.getStackInSlot(i);
-                if (!stack.isEmpty()) {
-                    stacks.add(stack);
-                }
-            }
-            // Animal feeding
-            List<Animal> entities = level.getEntitiesOfClass(Animal.class, (new AABB(pos).inflate(gstation.range, 1d, gstation.range))).stream().toList();
-            if (!entities.isEmpty()) {
-                Player fakePlayer = FakePlayerFactory.get(serverLevel, new GameProfile(PLAYER_UUID, "grooming_station"));
-                entities.forEach(animal -> {
-                    if (animal instanceof TFCAnimalProperties tfcAnimal) {
-                        float animalFamiliarity = tfcAnimal.getFamiliarity();
-                        boolean isChild = tfcAnimal.getAgeType() == TFCAnimalProperties.Age.CHILD;
-                        for (ItemStack stack : stacks) {
-                            // Feeding logic
-                            boolean stackHasItems = !stack.isEmpty();
-                            boolean animalHungry = tfcAnimal.isHungry();
-                            boolean animalCanEat = tfcAnimal.isFood(stack);
-                            if (stackHasItems && animalHungry && animalCanEat) {
-                                if ((isChild && animalFamiliarity < 1.0f) || (animalFamiliarity < tfcAnimal.getAdultFamiliarityCap())) {
-                                    tfcAnimal.eatFood(stack, InteractionHand.MAIN_HAND, fakePlayer);
-                                    break;
-                                }
+    public static void tickServer(Level level, BlockPos pos, GroomingStationBlockEntity groomStation) {
+        if (groomStation.counter-- > 0 || !(level instanceof ServerLevel)) return;
+        groomStation.counter = GroomerConfig.SERVER.groomingStationTicks.get();
 
-                            }
+        // Inventory updates
+        List<ItemStack> stacks = new ArrayList<>();
+        for (int i = 0; i < groomStation.inventory.getSlots(); i++) {
+            var stack = groomStation.inventory.getStackInSlot(i);
+            if (!stack.isEmpty()) {
+                stacks.add(stack);
+            }
+        }
+
+        // Animal feeding
+        List<Animal> entities = level.getEntitiesOfClass(Animal.class, (new AABB(pos).inflate(groomStation.range, 1d, groomStation.range))).stream().toList();
+        if (entities.isEmpty()) return;
+
+        Player fakePlayer = FakePlayerFactory.get((ServerLevel) level, new GameProfile(PLAYER_UUID, "grooming_station"));
+
+        entities.forEach(animal -> feedAnimalIfConditionsMet(animal, stacks, fakePlayer, groomStation.breedingEnabled));
+
+
+    }
+
+    private static void feedAnimalIfConditionsMet(Animal animal, List<ItemStack> currentStacks, Player fakePlayer, boolean breedingEnabled) {
+        if (animal instanceof TFCAnimalProperties tfcAnimal) {
+
+            float animalFamiliarity = tfcAnimal.getFamiliarity();
+            boolean isChild = tfcAnimal.getAgeType() == TFCAnimalProperties.Age.CHILD;
+            boolean animalHungry = tfcAnimal.isHungry();
+
+            for (ItemStack stack : currentStacks) {
+                boolean stackHasItems = !stack.isEmpty();
+                boolean stackIsEdible = tfcAnimal.isFood(stack);
+                // Feeding logic
+                if (stackHasItems && animalHungry && stackIsEdible) {
+                    if (breedingEnabled) {
+                        tfcAnimal.eatFood(stack, InteractionHand.MAIN_HAND, fakePlayer);
+                        break;
+                    } else {
+                        if ((isChild && animalFamiliarity < 1.0f) || (animalFamiliarity < tfcAnimal.getAdultFamiliarityCap())) {
+                            tfcAnimal.eatFood(stack, InteractionHand.MAIN_HAND, fakePlayer);
+                            break;
                         }
                     }
-                });
+                }
             }
         }
     }
@@ -143,10 +156,6 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
         super.saveAdditional(nbt);
     }
 
-    static boolean isFood(TFCAnimalProperties tfcAnimal, ItemStack stack) {
-        return (tfcAnimal.eatsRottenFood() || !FoodCapability.isRotten(stack)) && Helpers.isItem(stack, tfcAnimal.getFoodTag());
-    }
-
     public static class GroomingStationInventory extends InventoryItemHandler implements INBTSerializable<CompoundTag>
     {
         private final InventoryBlockEntity<?> entity;
@@ -181,13 +190,25 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
         }
     }
 
+    // TFC-friendly version of standard Minecraft comparator output function
+    public int getAnalogOutputSignal() {
+        int i = 0;
+        float f = 0.0F;
+
+        for(int j = 0; j < inventory.getSlots(); ++j) {
+            ItemStack itemstack = inventory.getStackInSlot(j);
+            if (!itemstack.isEmpty()) {
+                f += (float)itemstack.getCount() / (float)Math.min(inventory.getSlotStackLimit(i), ItemSizeManager.get(itemstack).getDefaultStackSize(itemstack));
+                ++i;
+            }
+        }
+
+        f /= (float)inventory.getSlots();
+        return Mth.floor(f * 14.0F) + (i > 0 ? 1 : 0);
+    }
 
 
     private static int toInt(boolean b) {return b ? 1 : 0;}
 
     private static boolean toBool(int i) {return i >= 1;}
-
-//    private static <T> T getValueOrDefault(ForgeConfigSpec.ConfigValue<T> value) {
-//        return GroomerConfig.isServerConfigLoaded()? value.get() : value.getDefault();
-//    }
 }

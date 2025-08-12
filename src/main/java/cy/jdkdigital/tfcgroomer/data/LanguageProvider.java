@@ -11,11 +11,16 @@ public class LanguageProvider extends net.minecraftforge.common.data.LanguagePro
         super(output, Groomer.MODID, "en_us");
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Override
     protected void addTranslations() {
         add("tfcgroomer.grooming_station.range", "Range: %s");
         add("block.tfcgroomer.grooming_station", "Grooming Station");
         add("gui.tfcgroomer.enable_breeding", "Enable Breeding");
+        add("config.jade.plugin_tfcgroomer.grooming_station", "Grooming Station");
+        add("tfcgroomer.tooltip.toggleBreeding", "Toggle Breeding");
+        add("tfcgroomer.tooltip.breedDisabled", "Breeding Disabled");
+        add("tfcgroomer.tooltip.breedEnabled", "Breeding Enabled");
         add("config.jade.plugin_tfcgroomer.grooming_station", "Grooming Station");
         Groomer.GROOMING_STATIONS.forEach(block -> {
             add(block.get(), capName(ForgeRegistries.BLOCKS.getKey(block.get()).getPath()));
