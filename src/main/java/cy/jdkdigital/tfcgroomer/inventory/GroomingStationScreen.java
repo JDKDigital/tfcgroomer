@@ -21,6 +21,7 @@ public class GroomingStationScreen extends BlockEntityScreen<GroomingStationBloc
 {
     private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Groomer.MODID, "textures/gui/grooming_station_small.png");
     private static final Component TOGGLE_BREED = Component.translatable("gui.tfcgroomer.enable_breeding");
+    private static final String TOGGLE_BREEDING_KEY = "tfcgroomer.tooltip.toggleBreeding";
     private MiniCheckbox checkbox;
 
 
@@ -33,7 +34,7 @@ public class GroomingStationScreen extends BlockEntityScreen<GroomingStationBloc
     protected void init() {
         super.init();
         if (GroomerConfig.SERVER.enableBreedingToggle.get()) {
-            createMiniCheckbox(leftPos + this.imageWidth - 17, topPos + 71, GroomingStationContainer.TOGGLE_BREED_ID, null);
+            createMiniCheckbox(leftPos + this.imageWidth - 17, topPos + 71, GroomingStationContainer.TOGGLE_BREED_ID, TOGGLE_BREEDING_KEY);
         }
     }
 

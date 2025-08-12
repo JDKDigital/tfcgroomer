@@ -30,7 +30,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +69,10 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
                         boolean isChild = tfcAnimal.getAgeType() == TFCAnimalProperties.Age.CHILD;
                         for (ItemStack stack : stacks) {
                             // Feeding logic
-                            if (!stack.isEmpty() && tfcAnimal.isHungry() && isFood(tfcAnimal, stack)) {
+                            boolean stackHasItems = !stack.isEmpty();
+                            boolean animalHungry = tfcAnimal.isHungry();
+                            boolean animalCanEat = tfcAnimal.isFood(stack);
+                            if (stackHasItems && animalHungry && animalCanEat) {
                                 if ((isChild && animalFamiliarity < 1.0f) || (animalFamiliarity < tfcAnimal.getAdultFamiliarityCap())) {
                                     tfcAnimal.eatFood(stack, InteractionHand.MAIN_HAND, fakePlayer);
                                     break;
@@ -101,7 +103,7 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
         }
 
         if (state.getBlock() instanceof GroomingStation groomingStation) {
-            this.range = groomingStation.range;
+            this.range = groomingStation.getRange();
         }
     }
 
