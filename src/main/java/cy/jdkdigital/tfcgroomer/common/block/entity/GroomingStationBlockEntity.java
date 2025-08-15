@@ -198,7 +198,7 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
         for(int j = 0; j < inventory.getSlots(); ++j) {
             ItemStack itemstack = inventory.getStackInSlot(j);
             if (!itemstack.isEmpty()) {
-                f += (float)itemstack.getCount() / (float)Math.min(inventory.getSlotStackLimit(i), ItemSizeManager.get(itemstack).getDefaultStackSize(itemstack));
+                f += (float)itemstack.getCount() / (float)Math.min(inventory.getSlotStackLimit(i), itemstack.getMaxStackSize());
                 ++i;
             }
         }
