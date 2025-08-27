@@ -38,7 +38,7 @@ public class BlockLootProvider implements DataProvider
         return "TFC: Grooming Station Block Loot Table datagen";
     }
 
-    @Override
+    @Override @NotNull
     public CompletableFuture<?> run(CachedOutput cache) {
         final Map<ResourceLocation, LootTable> map = Maps.newHashMap();
         this.subProviders.forEach((providerEntry) -> {

@@ -19,9 +19,7 @@ public class BlockTagProvider extends BlockTagsProvider
     protected void addTags(HolderLookup.Provider provider) {
         var pickaxeMineable = tag(BlockTags.MINEABLE_WITH_PICKAXE);
 
-        Groomer.GROOMING_STATIONS.forEach(block -> {
-            pickaxeMineable.add(block.get());
-        });
+        Groomer.GROOMING_STATIONS.forEach(block -> pickaxeMineable.add(block.get()));
     }
 
     @Override
