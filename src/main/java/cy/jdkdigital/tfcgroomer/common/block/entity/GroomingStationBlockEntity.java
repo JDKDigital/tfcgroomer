@@ -33,11 +33,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.INBTSerializable;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -80,8 +83,14 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
             boolean isChild = tfcAnimal.getAgeType() == TFCAnimalProperties.Age.CHILD;
             boolean animalHungry = tfcAnimal.isHungry();
 
+            assert Arrays.stream(tfcAnimal.getClass().getMethods())
+                    .map(Method::getName)
+                    .anyMatch(n -> n.equals("isFood"))
+                    : String.format("animal does not have isFood(). animal dump: \n" + ReflectionToStringBuilder.toString(tfcAnimal));
+
             for (ItemStack stack : currentStacks) {
                 boolean stackHasItems = !stack.isEmpty();
+
                 boolean stackIsEdible = tfcAnimal.isFood(stack);
                 // Feeding logic
                 if (stackHasItems && animalHungry && stackIsEdible) {
