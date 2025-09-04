@@ -1,9 +1,11 @@
 package cy.jdkdigital.tfcgroomer.config;
 
  import net.dries007.tfc.util.Metal;
-import net.minecraftforge.common.ForgeConfigSpec;
+ import net.minecraft.world.entity.EntityType;
+ import net.minecraftforge.common.ForgeConfigSpec;
 
-import java.util.EnumMap;
+ import java.util.EnumMap;
+ import java.util.List;
 
 public class ServerConfig {
 
@@ -21,6 +23,7 @@ public class ServerConfig {
     public final ForgeConfigSpec.BooleanValue groomingStationRedstoneOutput;
 
     // TODO: Animal blacklist
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> animalBlacklist;
 
 
     ServerConfig(ConfigBuilderWrapper builder) {
@@ -43,9 +46,12 @@ public class ServerConfig {
             }
         }
 
-        builder.swap("whitelist");
+        builder.swap("blacklist");
 
         // TODO: Animal Blacklist
+        animalBlacklist = builder
+                .comment("Animals ignored by the grooming station when feeding. Parsed as a resource location. For example: 'tfc:duck'")
+                .define("animalBlacklist", List.of(), entry -> EntityType.byString(entry).isPresent());
 
         builder.swap("automation");
 
