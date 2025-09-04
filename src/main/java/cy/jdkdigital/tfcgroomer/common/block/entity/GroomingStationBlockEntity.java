@@ -12,6 +12,7 @@ import net.dries007.tfc.common.capabilities.PartialItemHandler;
 import net.dries007.tfc.common.capabilities.food.FoodCapability;
 import net.dries007.tfc.common.capabilities.size.ItemSizeManager;
 import net.dries007.tfc.common.entities.livestock.TFCAnimalProperties;
+import net.dries007.tfc.util.Helpers;
 import net.dries007.tfc.util.IntArrayBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -69,8 +70,6 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
         Player fakePlayer = FakePlayerFactory.get((ServerLevel) level, new GameProfile(PLAYER_UUID, "grooming_station"));
 
         entities.forEach(animal -> feedAnimalIfConditionsMet(animal, stacks, fakePlayer, groomStation.breedingEnabled));
-
-
     }
 
     private static void feedAnimalIfConditionsMet(Animal animal, List<ItemStack> currentStacks, Player fakePlayer, boolean breedingEnabled) {
@@ -82,7 +81,7 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
 
             for (ItemStack stack : currentStacks) {
                 boolean stackHasItems = !stack.isEmpty();
-                boolean stackIsEdible = tfcAnimal.isFood(stack);
+                boolean stackIsEdible = isFood(tfcAnimal, stack);
                 // Feeding logic
                 if (stackHasItems && animalHungry && stackIsEdible) {
                     if (breedingEnabled) {
@@ -99,11 +98,14 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
         }
     }
 
+    static boolean isFood(TFCAnimalProperties tfcAnimal, ItemStack stack) {
+        return (tfcAnimal.eatsRottenFood() || !FoodCapability.isRotten(stack)) && Helpers.isItem(stack, tfcAnimal.getFoodTag());
+    }
+
     protected final ContainerData syncData;
     public boolean breedingEnabled; // Can Grooming Station feed animals capable of breeding
 
     public GroomingStationBlockEntity(BlockPos pos, BlockState state) {
-//        this(Groomer.GROOMING_STATION_BLOCK_ENTITY.get(), pPos, pBlockState);
         super(Groomer.GROOMING_STATION_BLOCK_ENTITY.get(), pos, state, GroomingStationInventory::new, NAME);
 
         breedingEnabled = GroomerConfig.SERVER.breedingEnabledByDefault.get();

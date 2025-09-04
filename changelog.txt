@@ -1,3 +1,13 @@
+1.20.1-0.2.1
+
+- Fixes crash caused by nondeterministic code in TFC, again
+
+
+1.20.1-0.2.0
+
+- https://github.com/JDKDigital/tfcgroomer/pull/7
+
+
 1.20.1-0.1.4
 
 - Fixes crash caused by nondeterministic code in TFC
