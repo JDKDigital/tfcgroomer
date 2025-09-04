@@ -1,9 +1,11 @@
 package cy.jdkdigital.tfcgroomer.config;
 
  import net.dries007.tfc.util.Metal;
-import net.minecraftforge.common.ForgeConfigSpec;
+ import net.minecraft.world.entity.EntityType;
+ import net.minecraftforge.common.ForgeConfigSpec;
 
-import java.util.EnumMap;
+ import java.util.EnumMap;
+ import java.util.List;
 
 public class ServerConfig {
 
@@ -20,7 +22,7 @@ public class ServerConfig {
     public final ForgeConfigSpec.BooleanValue groomingStationEnableAutomation;
     public final ForgeConfigSpec.BooleanValue groomingStationRedstoneOutput;
 
-    // TODO: Animal blacklist
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> animalBlacklist;
 
 
     ServerConfig(ConfigBuilderWrapper builder) {
@@ -43,15 +45,18 @@ public class ServerConfig {
             }
         }
 
-        builder.swap("whitelist");
-
-        // TODO: Animal Blacklist
-
         builder.swap("automation");
 
         groomingStationEnableAutomation = builder.comment("If true, grooming stations will interact with in-world automation such as hoppers on a side-specific basis.").define("groomingStationEnableAutomation", true);
 
         groomingStationRedstoneOutput = builder.comment("If true, the Grooming Station will emit a redstone signal proportional to how full it is.").define("groomingStationRedstoneOutput", true);
+
+        builder.swap("blacklist");
+
+        // TODO: Animal Blacklist
+        animalBlacklist = builder
+                .comment("Animals ignored by the grooming station when feeding. Parsed as a resource location. For example: 'tfc:duck'")
+                .define("animalBlacklist", List.of(), entry -> EntityType.byString(entry).isPresent());
 
         builder.pop();
     }
