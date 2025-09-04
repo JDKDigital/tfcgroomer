@@ -125,6 +125,8 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
                                 itemStack);
                     }
 
+                    be.inventory.onContentsChanged(currentStacks.indexOf(itemStack));
+
                     Groomer.LOGGER.debug("itemStack: {} | INIT stack count: {} | FINAL stack count: {}",
                             itemStack.getHoverName().getString(),
                             initCount,
