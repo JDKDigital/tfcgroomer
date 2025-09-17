@@ -31,7 +31,7 @@ public class GroomingStationContainer extends BlockEntityContainer<GroomingStati
     @Override
     protected boolean moveStack(@NotNull ItemStack stack, int slotIndex) {
         return switch (this.typeOf(slotIndex)) {
-            case MAIN_INVENTORY, HOTBAR -> !this.moveItemStackTo(stack, 0, 9, false);
+            case MAIN_INVENTORY, HOTBAR -> !this.moveItemStackTo(stack, 0, 4, false);
             case CONTAINER -> !this.moveItemStackTo(stack, this.containerSlots, this.slots.size(), false);
         };
     }

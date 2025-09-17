@@ -1,3 +1,8 @@
+1.20.1-0.2.2
+
+- Fixed grooming station container shift stack move duping items.
+
+
 1.20.1-0.2.1
 
 - Fixes crash caused by nondeterministic code in TFC, again

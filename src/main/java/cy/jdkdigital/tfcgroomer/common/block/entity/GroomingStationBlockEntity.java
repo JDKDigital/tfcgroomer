@@ -21,6 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.animal.Animal;
@@ -28,6 +29,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -160,6 +162,7 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
 
     public static class GroomingStationInventory extends InventoryItemHandler implements INBTSerializable<CompoundTag>
     {
+        private static final TagKey<Item> SEEDS = ItemTags.create(new ResourceLocation("tfc:seeds"));
         private final InventoryBlockEntity<?> entity;
 
         GroomingStationInventory(InventoryBlockEntity<?> entity) {
@@ -169,7 +172,7 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
 
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            return FoodCapability.has(stack) || stack.is(ItemTags.create(new ResourceLocation("tfc:seeds")));
+            return super.isItemValid(slot, stack) && (FoodCapability.has(stack) || stack.is(SEEDS));
         }
 
         @Override
