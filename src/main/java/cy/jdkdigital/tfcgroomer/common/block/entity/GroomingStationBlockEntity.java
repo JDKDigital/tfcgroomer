@@ -116,7 +116,7 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
          if (GroomerConfig.SERVER.groomingStationEnableAutomation.get()) {
             sidedInventory
                     .on(new PartialItemHandler(inventory).insert(0, 1, 2, 3), d -> d != Direction.DOWN)
-                    .on(new PartialItemHandler(inventory).extract(0, 1, 2, 3), Direction.DOWN);
+                    .on(new PartialItemHandler(inventory).extract(0, 1, 2, 3, 4, 5, 6, 7, 8), Direction.DOWN);
         }
 
         if (state.getBlock() instanceof GroomingStation groomingStation) {
@@ -166,8 +166,13 @@ public class GroomingStationBlockEntity extends TickableInventoryBlockEntity<Gro
         private final InventoryBlockEntity<?> entity;
 
         GroomingStationInventory(InventoryBlockEntity<?> entity) {
-            super(entity, 4);
+            super(entity, 9);
             this.entity = entity;
+        }
+
+        @Override
+        public int getSlots() {
+            return super.getSlots();
         }
 
         @Override

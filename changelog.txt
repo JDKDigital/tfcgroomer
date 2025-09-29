@@ -1,3 +1,8 @@
+1.20.1-0.2.3
+
+- Fixed crash when piping into grooming stations placed on versions prior to 0.2.0
+
+
 1.20.1-0.2.2
 
 - Fixed grooming station container shift stack move duping items.
